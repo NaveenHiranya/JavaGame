@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 // ================= PLAYER =================
+
 class Player {
 
     int x;
@@ -76,6 +77,7 @@ class Player {
         y += 10;
         position = "d";
     }
+
 }
 
 // ================= BULLET =================
@@ -109,15 +111,65 @@ class Bullet {
     }
 }
 
+// ================= ENEMY =================
+class Enemy {
+    int x;
+    int y;
+
+    public Enemy(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void move() {
+        y += 2;
+        if( y > 900){
+            this.y = 0;
+        }
+        if(x > 900){
+            this.x = 10;
+        }
+    }
+
+    public void draw(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(x, y, 30, 30);
+    }
+}
+
 // ================= GAME =================
 public class game extends JPanel implements KeyListener {
 
     Player player = new Player(100, 100);
+
     ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<Enemy> enemies = new ArrayList<>();
+
+    public void checkCollision() {
+
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet bullet = bullets.get(i);
+
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy enemy = enemies.get(j);
+
+                if (bullet.x < enemy.x + 30 && bullet.x + 5 > enemy.x
+                        && bullet.y < enemy.y + 30 && bullet.y + 10 > enemy.y) {
+                    bullets.remove(i);
+                    enemies.remove(j);
+                    enemies.add(new Enemy(enemy.x + 100, 0));
+                    return;
+                }
+            }
+        }
+    }
 
     public game() {
         setFocusable(true);
         addKeyListener(this);
+
+        // Create the first enemy
+        enemies.add(new Enemy(10, 0));
 
         // Game loop
         Timer timer = new Timer(30, e -> {
@@ -126,10 +178,15 @@ public class game extends JPanel implements KeyListener {
                 b.move();
             }
 
+            for (Enemy enemy : enemies) {
+                enemy.move();
+            }
+            checkCollision();
             repaint();
         });
 
         timer.start();
+
     }
 
     @Override
@@ -140,6 +197,10 @@ public class game extends JPanel implements KeyListener {
 
         for (Bullet b : bullets) {
             b.draw(g);
+        }
+
+        for (Enemy e : enemies) {
+            e.draw(g);
         }
     }
 
