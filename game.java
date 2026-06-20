@@ -77,6 +77,7 @@ class Player {
         y += 10;
         position = "d";
     }
+
 }
 
 // ================= BULLET =================
@@ -122,6 +123,12 @@ class Enemy {
 
     public void move() {
         y += 2;
+        if( y > 900){
+            this.y = 0;
+        }
+        if(x > 900){
+            this.x = 10;
+        }
     }
 
     public void draw(Graphics g) {
@@ -150,12 +157,11 @@ public class game extends JPanel implements KeyListener {
                         && bullet.y < enemy.y + 30 && bullet.y + 10 > enemy.y) {
                     bullets.remove(i);
                     enemies.remove(j);
-
+                    enemies.add(new Enemy(enemy.x + 100, 0));
                     return;
                 }
             }
         }
-
     }
 
     public game() {
@@ -163,7 +169,7 @@ public class game extends JPanel implements KeyListener {
         addKeyListener(this);
 
         // Create the first enemy
-        enemies.add(new Enemy(200, 0));
+        enemies.add(new Enemy(10, 0));
 
         // Game loop
         Timer timer = new Timer(30, e -> {
