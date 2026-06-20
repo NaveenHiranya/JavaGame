@@ -138,6 +138,26 @@ public class game extends JPanel implements KeyListener {
     ArrayList<Bullet> bullets = new ArrayList<>();
     ArrayList<Enemy> enemies = new ArrayList<>();
 
+    public void checkCollision() {
+
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet bullet = bullets.get(i);
+
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy enemy = enemies.get(j);
+
+                if (bullet.x < enemy.x + 30 && bullet.x + 5 > enemy.x
+                        && bullet.y < enemy.y + 30 && bullet.y + 10 > enemy.y) {
+                    bullets.remove(i);
+                    enemies.remove(j);
+
+                    return;
+                }
+            }
+        }
+
+    }
+
     public game() {
         setFocusable(true);
         addKeyListener(this);
@@ -155,7 +175,7 @@ public class game extends JPanel implements KeyListener {
             for (Enemy enemy : enemies) {
                 enemy.move();
             }
-
+            checkCollision();
             repaint();
         });
 
