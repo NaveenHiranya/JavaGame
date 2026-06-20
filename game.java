@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 // ================= PLAYER =================
+
 class Player {
 
     int x;
@@ -109,15 +110,40 @@ class Bullet {
     }
 }
 
+// ================= ENEMY =================
+class Enemy {
+    int x;
+    int y;
+
+    public Enemy(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void move() {
+        y += 2;
+    }
+
+    public void draw(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(x, y, 30, 30);
+    }
+}
+
 // ================= GAME =================
 public class game extends JPanel implements KeyListener {
 
     Player player = new Player(100, 100);
+
     ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<Enemy> enemies = new ArrayList<>();
 
     public game() {
         setFocusable(true);
         addKeyListener(this);
+
+        // Create the first enemy
+        enemies.add(new Enemy(200, 0));
 
         // Game loop
         Timer timer = new Timer(30, e -> {
@@ -126,10 +152,15 @@ public class game extends JPanel implements KeyListener {
                 b.move();
             }
 
+            for (Enemy enemy : enemies) {
+                enemy.move();
+            }
+
             repaint();
         });
 
         timer.start();
+
     }
 
     @Override
@@ -140,6 +171,10 @@ public class game extends JPanel implements KeyListener {
 
         for (Bullet b : bullets) {
             b.draw(g);
+        }
+
+        for (Enemy e : enemies) {
+            e.draw(g);
         }
     }
 
